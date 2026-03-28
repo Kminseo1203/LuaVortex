@@ -2,7 +2,6 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="connect-src 'self' http://87.106.155.7:9391 data: blob:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUA VORTEX | Advanced Obfuscator</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -72,15 +71,14 @@
     <script>
 async function deploy() {
     const btn = document.getElementById('deployBtn');
-    const inputArea = document.getElementById('input'); // 원본 코드 입력창
+    const inputArea = document.getElementById('input');
     const code = inputArea.value;
-    const filename = document.getElementById('filename').value;
     const resultBox = document.getElementById('resultBox');
     const resultUrl = document.getElementById('resultUrl');
 
-    if(!code) return alert("코드를 입력하세요.");
+    if (!code) return alert("코드를 입력하세요.");
 
-    btn.innerText = "OBFUSCATING..."; // 텍스트 변경
+    btn.innerText = "OBFUSCATING...";
     btn.disabled = true;
 
     try {
@@ -91,22 +89,20 @@ async function deploy() {
         });
 
         const data = await response.json();
-if (data.success) {
-    inputArea.value = data.result;
-} else {
-    alert("서버 오류: " + data.error);
-}
-
-        resultBox.classList.remove('hidden');
-        resultUrl.innerText = "LUA VORTEX: 난독화 완료! (내용이 업데이트됨)";
-        btn.innerText = "COMPLETE";
-        
-        // 3초 뒤에 버튼 상태 복구
-        setTimeout(() => {
-            btn.innerText = "GENERATE & DEPLOY";
+        if (data.success) {
+            inputArea.value = data.result;
+            resultBox.classList.remove('hidden');
+            resultUrl.innerText = "LUA VORTEX: 난독화 완료! (내용이 업데이트됨)";
+            btn.innerText = "COMPLETE";
+            setTimeout(() => {
+                btn.innerText = "GENERATE & DEPLOY";
+                btn.disabled = false;
+            }, 3000);
+        } else {
+            alert("서버 오류: " + data.error);
+            btn.innerText = "RETRY";
             btn.disabled = false;
-        }, 3000);
-
+        }
     } catch (e) {
         alert("오류 발생: " + e.message);
         btn.innerText = "RETRY";
